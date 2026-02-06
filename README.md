@@ -1,11 +1,11 @@
-# TPlanet
+# TPlanet Beta
 
-TPlanet 平台 - Multi-tenant CMS with LLM RAG & Agent
+TPlanet 平台 (測試環境) - Multi-tenant CMS with LLM RAG & Agent
 
 ## 目錄結構
 
 ```
-tplanet/
+tplanet-beta/
 ├── apps/                         # 應用程式 (獨立 repos)
 │   ├── tplanet-AI/               # Frontend (React + Vite) → main
 │   ├── tplanet-daemon/           # Backend (Django) → beta
@@ -14,7 +14,6 @@ tplanet/
 │
 ├── docker-compose.yml            # Base compose
 ├── docker-compose.beta.yml       # Beta 環境
-├── docker-compose.stable.yml     # Stable 環境
 ├── docker-compose.multi-tenant.yml
 ├── setup.sh                      # 自動 clone apps + 設定 branch
 ├── nginx/
@@ -26,8 +25,8 @@ tplanet/
 
 ```bash
 # 1. Clone repo
-git clone git@github.com:town-intelligent/tplanet.git
-cd tplanet
+git clone git@github.com:town-intelligent/tplanet-beta.git
+cd tplanet-beta
 
 # 2. 執行 setup.sh 自動 clone 所有 apps 並設定 branch
 ./setup.sh
@@ -39,19 +38,6 @@ cp .env.example .env
 docker compose -f docker-compose.yml -f docker-compose.beta.yml up -d
 ```
 
-## 部署指令
-
-```bash
-# Beta 環境
-docker compose -f docker-compose.yml -f docker-compose.beta.yml up -d
-
-# Stable 環境
-docker compose -f docker-compose.yml -f docker-compose.stable.yml up -d
-
-# Multi-tenant 環境
-docker compose -f docker-compose.yml -f docker-compose.multi-tenant.yml up -d
-```
-
 ## Apps 分支對應
 
 | App | Branch | 說明 |
@@ -60,6 +46,26 @@ docker compose -f docker-compose.yml -f docker-compose.multi-tenant.yml up -d
 | tplanet-daemon | beta | Backend with multi-tenant |
 | LLMTwins | beta-tplanet-AI | AI Service |
 | ollama-gateway | main | LLM Gateway |
+
+## Multi-tenant 測試網址 (Beta)
+
+| 網址 | Tenant |
+|------|--------|
+| https://beta.multi-tenant.4impact.cc | default |
+| https://nantou.beta.multi-tenant.4impact.cc | nantou-gov |
+
+## Beta vs Stable
+
+| 環境 | Repo | 用途 |
+|------|------|------|
+| Beta | tplanet-beta (本 repo) | Demo / 測試 |
+| Stable | [tplanet-stable](https://github.com/town-intelligent/tplanet-stable) | 正式使用 |
+
+## 部署流程
+
+```
+開發 → tplanet-beta (測試) → PM 驗收 → merge to stable → tplanet-stable (正式)
+```
 
 ## 開發流程
 
@@ -78,13 +84,6 @@ git pull origin beta
 # ... 修改 ...
 git add . && git commit && git push
 ```
-
-## Multi-tenant 測試網址
-
-| 網址 | Tenant |
-|------|--------|
-| https://multi-tenant.4impact.cc | default |
-| https://nantou.multi-tenant.4impact.cc | nantou-gov |
 
 ## 架構
 
@@ -122,9 +121,4 @@ git add . && git commit && git push
 
 ## 新增 Tenant
 
-1. 編輯 `apps/tplanet-daemon/backend/config/tenants.yml`
-2. 建立對應的資料庫
-3. 新增 tenant 媒體檔案到 `apps/tplanet-AI/public/assets/tenants/{tenant}/`
-4. 更新 `apps/tplanet-AI/src/utils/TenantContext.jsx` 的 `TENANT_CONFIG`
-5. 設定 DNS + Nginx (`nginx/` 目錄)
-6. 重啟服務
+詳見 [docs/add-tenant.md](docs/add-tenant.md)
