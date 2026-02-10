@@ -1,0 +1,99 @@
+.progressbar {
+  counter-reset: step;
+	position: relative;
+	left:-15px;
+	width: 55%;
+	margin: 0px auto;
+}
+@media (max-width: 2000px){
+	.progressbar{
+		width: 58%;
+		left:-18px;
+	}
+}
+@media (max-width: 1500px){
+	.progressbar{
+		width: 75%;
+		left:-18px;
+	}
+}
+@media (max-width: 1200px){
+	.progressbar{
+		width: 80%;
+		left:-18px;
+	}
+}
+@media (max-width: 576px){
+	.progressbar{
+		width: 100%;
+		left:-18px;
+	}
+}
+.progressbar li {
+  list-style-type: none;
+  float: left;
+  width: 20%;
+  position: relative;
+  text-align: center;
+}
+.progressbar li span {
+  position: absolute;
+  top: 50px;
+  width: 100%;
+  left: 50%;
+  font-weight: bold;
+  font-size: 14px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.progressbar li:before {
+  content: "";
+  counter-increment: step;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  border: 1px solid #d9d9d9;
+  display: block;
+  text-align: center;
+  margin: 0 -10px 0 auto;
+  border-radius: 50%;
+  background: #fff;
+  position: relative;
+  top: 20px;
+  z-index: 2;
+}
+.progressbar li:last-child:before {
+  visibility: hidden;
+}
+.progressbar li:after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 20px;
+  background: #d9d9d9;
+  border: 1px solid #d9d9d9;
+  left: 0%;
+}
+.progressbar li:first-child:after {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.progressbar li:last-child:after {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.progressbar li.active {
+  color: black;
+}
+.progressbar li.active:before {
+  border-color: #CEEAFF;
+  background-color: #CEEAFF;
+}
+.progressbar li.active:after {
+  background-color: #317EE0;
+  border: 1px solid #317EE0;
+}
+.progressbar li.done:before {
+  border-color: #54B3F8;
+  background-color: #54B3F8;
+}
