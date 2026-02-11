@@ -7,6 +7,7 @@ import Modal from "react-bootstrap/Modal";
 import UserRegistrationStatistics from "./components/UserRegistrationModal";
 import EditAccountModal from "../../utils/components/EditAccountModal";
 import ActivateIcon from "../../assets/activate_icon.svg";
+import DeleteIcon from "../../assets/delete_icon.svg";
 
 import {
   deleteAccount,
@@ -776,7 +777,7 @@ const AccountList = () => {
                         >
                           {/* 使用 hardcode 的綠底圖示 */}
                           <img
-                            src="/src/assets/activate_icon.svg"
+                            src={ActivateIcon}
                             alt={account.status === "啟用" ? t("accountList.disable_account") : t("accountList.enable_account")}
                             className="w-4 h-4"
                           />
@@ -788,7 +789,7 @@ const AccountList = () => {
                           title={t("accountList.delete_account")}
                           onClick={() => handleDeleteAccount(account.email)}
                         >
-                          <img src="/src/assets/delete_icon.svg" alt={t("accountList.delete_account")} className="w-4 h-4" />
+                          <img src={DeleteIcon} alt={t("accountList.delete_account")} className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
