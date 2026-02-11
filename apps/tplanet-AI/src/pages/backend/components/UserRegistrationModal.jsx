@@ -29,11 +29,11 @@ const UserRegistrationStatistics = ({ show, onHide }) => {
       const data = await response.json();
       console.log("Registration stats response:", data);
 
-      if (data.result !== true) {
-        throw new Error(data.error || "獲取統計資料失敗");
+      if (data.success !== true && data.result !== true) {
+        throw new Error(data.error?.message || data.error || "獲取統計資料失敗");
       }
 
-      const stats = data.stats || [];
+      const stats = data.data?.stats || data.stats || [];
       
       // 格式化資料以便圖表使用
       const formattedStats = stats.map(item => ({
