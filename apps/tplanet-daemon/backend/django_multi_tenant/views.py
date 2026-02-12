@@ -399,6 +399,19 @@ def tenant_detail(request: HttpRequest, tenant_id: str) -> JsonResponse:
     try:
         tenant = TenantConfig.objects.get(tenant_id=tenant_id)
     except TenantConfig.DoesNotExist:
+        # YAML-only tenant — DELETE creates a suppression record, others 404
+        if request.method == "DELETE":
+            from django_multi_tenant import cloudflare
+            cloudflare.delete_subdomain(tenant_id)
+            TenantConfig.objects.create(
+                tenant_id=tenant_id, name=tenant_id, is_active=False, hosters=[]
+            )
+            logger.info(f"Deleted YAML-only tenant: {tenant_id}")
+            return JsonResponse({
+                "success": True,
+                "message": f"Tenant '{tenant_id}' deleted",
+                "cleaned": ["dns", "db(suppressed)"],
+            })
         return JsonResponse({"error": f"Tenant '{tenant_id}' not found"}, status=404)
 
     if not tenant.is_active and request.method != "DELETE":
