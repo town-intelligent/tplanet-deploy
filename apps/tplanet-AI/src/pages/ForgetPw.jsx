@@ -1,8 +1,10 @@
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import { forgotPassword } from "../utils/Accounts";
+import { useTenantTheme } from "../utils/multi-tenant";
 
 const ForgetPw = () => {
+  const { primaryColor } = useTenantTheme();
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false); // 新增狀態控制
 
@@ -66,9 +68,9 @@ const ForgetPw = () => {
             <div className="row justify-content-center mt-3">
               <div className="col-11 col-sm-5 px-0">
                 <Button
-                  variant="dark"
                   type="button"
-                  className="btn btn-block btn-dark w-full"
+                  className="btn btn-block w-full text-white border-0"
+                  style={{ backgroundColor: primaryColor }}
                   onClick={handleSubmit}
                   disabled={isSubmitting}
                 >
@@ -100,7 +102,7 @@ const ForgetPw = () => {
             aria-hidden="true"
           >
             <path
-              fill="#2f80ed"
+              fill={primaryColor}
               d="M0,76 C180,44 360,20 540,30 C720,40 900,80 1080,86 C1260,92 1350,80 1440,66 L1440,120 L0,120 Z"
             ></path>
           </svg>

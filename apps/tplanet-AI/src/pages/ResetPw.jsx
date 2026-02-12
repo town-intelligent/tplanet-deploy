@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
+import { useTenantTheme } from "../utils/multi-tenant";
 
 const ResetPw = () => {
 
@@ -27,6 +28,7 @@ const ResetPw = () => {
   });
   const [passwordMatch, setPasswordMatch] = useState(null); // null: 未檢查, true: 匹配, false: 不匹配
   const { t } = useTranslation();
+  const { primaryColor } = useTenantTheme();
 
   // 密碼規則驗證
   useEffect(() => {
@@ -223,13 +225,13 @@ const ResetPw = () => {
             <div className="row justify-content-center mt-3">
               <div className="col-11 col-sm-5 px-0">
                 <Button
-                  variant="dark"
                   type="button"
-                  className={`btn w-full h-12 rounded-xl font-medium transition-colors ${
+                  className={`btn w-full h-12 rounded-xl font-medium transition-colors border-0 ${
                     passwordValidation.isValid && passwordMatch
-                      ? "bg-gray-800 text-white hover:bg-gray-700"
+                      ? "text-white"
                       : "bg-gray-400 text-gray-200 cursor-not-allowed"
                   }`}
+                  style={passwordValidation.isValid && passwordMatch ? { backgroundColor: primaryColor } : {}}
                   onClick={handleSubmit}
                   disabled={!passwordValidation.isValid || !passwordMatch}
                 >
@@ -277,7 +279,7 @@ const ResetPw = () => {
             aria-hidden="true"
           >
             <path
-              fill="#2f80ed"
+              fill={primaryColor}
               d="M0,76 C180,44 360,20 540,30 C720,40 900,80 1080,86 C1260,92 1350,80 1440,66 L1440,120 L0,120 Z"
             ></path>
           </svg>

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utils/ProtectRoute";
 import { useTranslation } from "react-i18next";
 import { apiPost } from "../utils/api";
+import { useTenantTheme } from "../utils/multi-tenant";
 
 const getLocalStorage = (key) => localStorage.getItem(key);
 
@@ -18,6 +19,7 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const { setIsAuthenticated } = useAuth();
   const { t } = useTranslation();
+  const { primaryColor, secondaryColor } = useTenantTheme();
 
   const signin = async (formdata) => {
     setIsLoading(true);
@@ -157,9 +159,9 @@ export default function SignIn() {
           <div className="row justify-content-center mt-4">
             <div className="col-11 col-sm-5 p-0">
               <Button
-                variant="dark"
                 type="submit"
-                className="btn btn-block btn-dark w-full"
+                className="btn btn-block w-full text-white border-0"
+                style={{ backgroundColor: primaryColor }}
                 onClick={handleSubmit}
                 disabled={!isVerified}
               >
@@ -191,7 +193,7 @@ export default function SignIn() {
           aria-hidden="true"
         >
           <path
-            fill="#2f80ed"
+            fill={primaryColor}
             d="M0,76 C180,44 360,20 540,30 C720,40 900,80 1080,86 C1260,92 1350,80 1440,66 L1440,120 L0,120 Z"
           ></path>
         </svg>

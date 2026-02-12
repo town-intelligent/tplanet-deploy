@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import Captcha from "../utils/Captcha";
 import PrivacyPolicyModal from "../components/PrivacyPolicyModal";
 import { useTranslation } from "react-i18next";
+import { useTenantTheme } from "../utils/multi-tenant";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -20,6 +21,7 @@ const SignUp = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { t } = useTranslation();
+  const { primaryColor } = useTenantTheme();
 
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -197,7 +199,8 @@ const SignUp = () => {
                 <button
                   type="button"
                   onClick={() => setShowPolicy(true)}
-                  className="ml-auto text-blue-600 hover:underline bg-transparent border-0 p-0"
+                  className="ml-auto hover:underline bg-transparent border-0 p-0"
+                  style={{ color: primaryColor }}
                 >
                   {t("signup.readPrivacyPolicy")}
                 </button>
@@ -212,9 +215,9 @@ const SignUp = () => {
           <div className="row justify-content-center mt-3">
             <div className="col-11 col-sm-5 px-0">
               <Button
-                variant="dark"
                 type="button"
-                className="btn btn-block btn-dark w-full"
+                className="btn btn-block w-full text-white border-0"
+                style={{ backgroundColor: primaryColor }}
                 onClick={handleSubmit}
                 disabled={!isVerified}
               >
@@ -244,7 +247,7 @@ const SignUp = () => {
           aria-hidden="true"
         >
           <path
-            fill="#2f80ed"
+            fill={primaryColor}
             d="M0 84c120 28 240 42 360 37s240-34 360-63 240-40 360-26 240 58 360 74v34H0Z"
           />
         </svg>
