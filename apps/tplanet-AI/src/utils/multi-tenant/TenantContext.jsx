@@ -135,6 +135,15 @@ export function useSocialLinks() {
 }
 
 /**
+ * Hook to get tenant logo URL.
+ * @returns {string} Logo URL (empty string if not set)
+ */
+export function useLogoUrl() {
+  const context = useContext(TenantContext);
+  return context?.config?.logoUrl || '';
+}
+
+/**
  * Hook to get tenant privacy policy URL.
  * @returns {string} Privacy policy URL
  */

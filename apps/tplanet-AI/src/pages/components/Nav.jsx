@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import Logo from "../../assets/logo.svg";
+import DefaultLogo from "../../assets/logo.svg";
 import User from "../../assets/user.svg";
 import Language_icon from "../../assets/language.svg";
 import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../utils/ProtectRoute";
 import { useTranslation } from "react-i18next";
+import { useLogoUrl, useBrandName, useTenant } from "../../utils/multi-tenant";
 
 export default function Str_Nav() {
   const location = useLocation();
@@ -15,6 +16,10 @@ export default function Str_Nav() {
   const { isAuthenticated } = useAuth();
 
   const { t, i18n } = useTranslation();
+  const { loading } = useTenant();
+  const tenantLogoUrl = useLogoUrl();
+  const brandName = useBrandName();
+  const logoSrc = loading ? null : (tenantLogoUrl || DefaultLogo);
 
   // Navbar 滾動/滑入效果
   useEffect(() => {
@@ -63,26 +68,30 @@ export default function Str_Nav() {
           href="/"
           className="d-none d-md-block my-md-2 ml-10 w-[260px]"
         >
-          <img
-            src={Logo}
-            alt="Second HomeLOGO圖"
-            className="logo-pc h-[42.88px]"
-            style={{
-              opacity: scrollOpacity,
-              transition: "opacity 0.3s ease-in-out",
-            }}
-          />
+          {logoSrc && (
+            <img
+              src={logoSrc}
+              alt={`${brandName} Logo`}
+              className="logo-pc h-[42.88px]"
+              style={{
+                opacity: scrollOpacity,
+                transition: "opacity 0.3s ease-in-out",
+              }}
+            />
+          )}
         </Navbar.Brand>
         <Navbar.Brand href="/" className="d-md-none my-2 w-[260px]">
-          <img
-            src={Logo}
-            alt="Second HomeLOGO圖"
-            className="logo-mobile h-[42.88px]"
-            style={{
-              opacity: scrollOpacity,
-              transition: "opacity 0.3s ease-in-out",
-            }}
-          />
+          {logoSrc && (
+            <img
+              src={logoSrc}
+              alt={`${brandName} Logo`}
+              className="logo-mobile h-[42.88px]"
+              style={{
+                opacity: scrollOpacity,
+                transition: "opacity 0.3s ease-in-out",
+              }}
+            />
+          )}
         </Navbar.Brand>
 
         <Navbar.Toggle
@@ -96,7 +105,7 @@ export default function Str_Nav() {
             <Nav.Item id="index">
               <Nav.Link
                 href="/"
-                className="!text-black hover:!text-blue-400"
+                className="!text-black hover:!text-[var(--tenant-primary)]"
                 title="Second Home"
                 style={{
                   opacity: scrollOpacity,
@@ -132,7 +141,7 @@ export default function Str_Nav() {
               <Nav.Item id="sustainable">
                 <Nav.Link
                   href="/kpi"
-                  className="!text-black hover:!text-blue-400"
+                  className="!text-black hover:!text-[var(--tenant-primary)]"
                   title={t("nav.sustainable")}
                   style={{
                     opacity: scrollOpacity,
@@ -147,7 +156,7 @@ export default function Str_Nav() {
             <Nav.Item id="news_list">
               <Nav.Link
                 href="/news_list"
-                className="!text-black hover:!text-blue-400"
+                className="!text-black hover:!text-[var(--tenant-primary)]"
                 title={t("nav.news")}
                 style={{
                   opacity: scrollOpacity,
@@ -218,7 +227,7 @@ export default function Str_Nav() {
                 />
                 <Nav.Link
                   href="/signin"
-                  className="px-0 !text-black hover:!text-blue-400"
+                  className="px-0 !text-black hover:!text-[var(--tenant-primary)]"
                   title={t("nav.signin")}
                   style={{
                     opacity: scrollOpacity,
@@ -230,7 +239,7 @@ export default function Str_Nav() {
                 <span className="px-1 align-middle mb-0.5">/</span>
                 <Nav.Link
                   href="/signup"
-                  className="px-0 !text-black hover:!text-blue-400"
+                  className="px-0 !text-black hover:!text-[var(--tenant-primary)]"
                   title={t("nav.signup")}
                   style={{
                     opacity: scrollOpacity,

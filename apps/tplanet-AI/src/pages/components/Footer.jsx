@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
-import Logo from "../../assets/logo.svg";
+import DefaultLogo from "../../assets/logo.svg";
 import FbIcon from "../../assets/fb-icon.svg";
 import YoutubeIcon from "../../assets/youtube-icon.svg";
 import { Container, Row, Col } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { useBrandName, useSocialLinks, usePrivacyUrl } from "../../utils/multi-tenant";
+import { useBrandName, useLogoUrl, useSocialLinks, usePrivacyUrl, useTenant } from "../../utils/multi-tenant";
 
 const Footer = () => {
   const [todayViews, setTodayViews] = useState(0);
   const [totalViews, setTotalViews] = useState(0);
   const { t } = useTranslation();
   const brandName = useBrandName();
+  const { loading } = useTenant();
+  const tenantLogoUrl = useLogoUrl();
+  const logoSrc = loading ? null : (tenantLogoUrl || DefaultLogo);
   const socialLinks = useSocialLinks();
   const privacyUrl = usePrivacyUrl();
 
@@ -59,7 +62,7 @@ const Footer = () => {
   const socialLinkItems = [
     {
       href: "/",
-      imgSrc: Logo,
+      imgSrc: logoSrc,
       height: "35px",
       title: brandName,
     },
@@ -192,7 +195,7 @@ const Footer = () => {
               <span className="flex items-center mr-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 mr-1 text-[#317EE0]"
+                  className="h-4 w-4 mr-1 text-[var(--tenant-primary)]"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -212,7 +215,7 @@ const Footer = () => {
                7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                   />
                 </svg>
-                <span className="text-[#317EE0] font-medium">{t("footer.todayViews")}</span>
+                <span className="text-[var(--tenant-primary)] font-medium">{t("footer.todayViews")}</span>
                 <span className="ml-1">{todayViews} {t("footer.times")}</span>
               </span>
 
@@ -220,7 +223,7 @@ const Footer = () => {
               <span className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 mr-1 text-[#317EE0]"
+                  className="h-4 w-4 mr-1 text-[var(--tenant-primary)]"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -237,7 +240,7 @@ const Footer = () => {
                    01-1-1V3z"
                   />
                 </svg>
-                <span className="text-[#317EE0] font-medium">{t("footer.totalViews")}</span>
+                <span className="text-[var(--tenant-primary)] font-medium">{t("footer.totalViews")}</span>
                 <span className="ml-1">{totalViews} {t("footer.times")}</span>
               </span>
             </div>

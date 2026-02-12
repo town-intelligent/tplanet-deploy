@@ -4,6 +4,29 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { TenantContext, DEFAULT_CONFIG, createInitialState, setTenantOverride } from './TenantContext';
 
+// Apply theme CSS variables to document root
+const CSS_VAR_MAP = {
+  primary_color: '--tenant-primary',
+  secondary_color: '--tenant-secondary',
+  accent_color: '--tenant-accent',
+  background_color: '--tenant-bg',
+  text_color: '--tenant-text',
+  banner_bg: '--tenant-banner-bg',
+  header_bg: '--tenant-header-bg',
+};
+
+function applyThemeVariables(theme) {
+  if (!theme) return;
+  const root = document.documentElement;
+  Object.entries(CSS_VAR_MAP).forEach(([key, cssVar]) => {
+    if (theme[key]) root.style.setProperty(cssVar, theme[key]);
+  });
+  if (theme.primary_color) {
+    root.style.setProperty('--tenant-primary-light', `${theme.primary_color}20`);
+    root.style.setProperty('--tenant-primary-dark', theme.secondary_color || theme.primary_color);
+  }
+}
+
 async function fetchTenantConfig(tenantId, configUrl) {
   const url = configUrl.replace('{tenant}', tenantId);
   const response = await fetch(url, { headers: { 'X-Tenant-ID': tenantId } });
@@ -77,9 +100,17 @@ export function TenantProvider({ children, configUrl, staticConfig, onTenantChan
     setTenant,
   }), [state.tenant, state.config, state.loading, state.error, setTenant]);
 
+  // Apply CSS variables when theme changes
+  useEffect(() => {
+    if (!state.loading && state.config?.theme) {
+      applyThemeVariables(state.config.theme);
+    }
+  }, [state.config?.theme, state.loading]);
+
+  // Don't render children until tenant config is loaded (prevents color flash)
   return (
     <TenantContext.Provider value={contextValue}>
-      {children}
+      {state.loading ? null : children}
     </TenantContext.Provider>
   );
 }
