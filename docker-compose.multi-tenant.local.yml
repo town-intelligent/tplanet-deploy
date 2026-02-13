@@ -1,37 +1,56 @@
-# Local deploy override:
-# 1. Reset bind mounts (not accessible from Docker daemon in this environment)
-# 2. Use Dockerfile.multi-tenant for backend (Python 3.11 compatibility)
-# 3. Install gunicorn at runtime for production backend
-# 4. Remap db/db-nantou ports to avoid conflicts with stable env
+# Stable environment local override
+# Container names: mt-stable-*
+# Ports: offset from dev to avoid conflicts
 services:
   frontend:
+    container_name: mt-stable-frontend
     volumes: !reset []
     command: sh -c "npm run build && npx vite preview --host 0.0.0.0 --port 5170"
+    ports: !override
+      - "6177:5170"
+    environment:
+      - VITE_HOST_URL_TPLANET=https://stable.4impact.cc
+      - VITE_API_LLMTWINS=https://stable.4impact.cc
 
   backend:
+    container_name: mt-stable-backend
     build:
       context: ./apps/tplanet-daemon
       dockerfile: Dockerfile.multi-tenant
     volumes:
-      - /var/www/multi-tenant-static/news:/server/backend/static/news
-      - /var/www/multi-tenant-static/uploads:/server/backend/static/uploads
+      - /var/www/mt-stable-static/news:/server/backend/static/news
+      - /var/www/mt-stable-static/uploads:/server/backend/static/uploads
     command: sh -c "pip install gunicorn && cd /server/backend && python manage.py migrate --noinput && gunicorn backend.wsgi:application --bind 0.0.0.0:5567"
+    ports: !override
+      - "5581:5567"
 
   db:
+    container_name: mt-stable-db
     ports: !override
-      - "5439:5432"
+      - "5441:5432"
 
   db-nantou:
+    container_name: mt-stable-db-nantou
     ports: !override
-      - "5440:5432"
+      - "5442:5432"
     volumes: !reset
       - db_nantou_data:/var/lib/postgresql/data
 
-  llmtwins:
+  ollama:
+    container_name: mt-stable-ollama
+
+  ollama-gateway:
+    container_name: mt-stable-ollama-gw
     ports: !override
-      - "8012:8002"
+      - "8183:8082"
+
+  llmtwins:
+    container_name: mt-stable-llmtwins
+    ports: !override
+      - "8013:8002"
     volumes: !reset []
 
   llmtwins-wrapper:
+    container_name: mt-stable-llmtwins-wrapper
     ports: !override
-      - "8014:8001"
+      - "8015:8001"
