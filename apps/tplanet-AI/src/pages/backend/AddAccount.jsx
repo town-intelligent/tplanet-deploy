@@ -12,7 +12,7 @@ const AddAccount = () => {
     handler: "",       // -> hoster
     email: "",
     department: "",    // -> undertake
-    role: "一般使用者",  // 固定為一般使用者
+    role: "會員",  // 固定為會員
     phone: "",         // -> phone_number
     enabled: true,     // 後端目前固定啟用；預留
   });
@@ -22,7 +22,7 @@ const AddAccount = () => {
   const departments = useDepartments();
 
   const roleMap = {
-    user: "一般使用者",
+    user: "會員",
   };
 
   const handleChange = (e) => {
@@ -56,7 +56,7 @@ const AddAccount = () => {
       email: formData.email.trim(),
       undertake: formData.department,         // 地方團隊
       hoster: formData.handler.trim(),        // 承辦窗口
-      // role: roleMap[formData.role] || formData.role, // 後端目前使用中文
+        // role: roleMap[formData.role] || formData.role
       role: formData.role,
       phone_number: formData.phone.trim(),
       enabled: formData.enabled,
@@ -77,7 +77,7 @@ const AddAccount = () => {
         handler: "",
         email: "",
         department: "",
-        role: "一般使用者",
+        role: "會員",
         phone: "",
         enabled: s.enabled,
       }));
@@ -150,7 +150,7 @@ const AddAccount = () => {
                 <Form.Label>{t("addAccount.role")}</Form.Label>
                 <Form.Control
                   type="text"
-                  value={t("addAccount.role_user")}
+                  value={formData.role}
                   readOnly
                   className="bg-gray-100"
                 />

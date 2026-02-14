@@ -37,7 +37,7 @@ def get_user_list():
             "email": user.email,
             "undertake": profile.undertake if profile else "",
             "hoster": profile.hoster if profile else "",
-            "role": profile.role if profile else "一般使用者",
+            "role": profile.role if profile else "會員",
             "phone_number": profile.phone_number if profile else "",
             "last_login_at": profile.last_login_at.strftime("%Y-%m-%d %H:%M:%S") if profile and profile.last_login_at else "-",
             "login_count": profile.login_count if profile else 0,

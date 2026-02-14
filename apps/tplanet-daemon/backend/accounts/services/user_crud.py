@@ -59,8 +59,30 @@ def add_user(request):
         missing = [k for k, v in fields.items() if not v]
         if missing:
             return False, f"Missing required fields: {', '.join(missing)}"
-        if User.objects.filter(email=fields["email"]).exists():
-            return False, "User already exist"
+
+        # If user already exists globally, bind it to current tenant hosters
+        # instead of failing. This matches the "add site hoster member" behavior.
+        existing = User.objects.filter(email=fields["email"]).first()
+        if existing:
+            profile, created = AccountProfile.objects.get_or_create(
+                obj_user=existing,
+                defaults={
+                    "undertake": fields["undertake"],
+                    "hoster": fields["hoster"],
+                    "role": fields["role"],
+                    "phone_number": request.get("phone_number"),
+                },
+            )
+            if not created:
+                profile.undertake = fields["undertake"]
+                profile.hoster = fields["hoster"]
+                profile.role = fields["role"]
+                profile.phone_number = request.get("phone_number")
+                profile.save(update_fields=["undertake", "hoster", "role", "phone_number"])
+
+            _assign_group(existing, fields["role"])
+            _add_to_hosters(fields["email"])
+            return True, existing
 
         password = ''.join(random.sample(string.ascii_letters + string.digits, 8))
         with transaction.atomic():
