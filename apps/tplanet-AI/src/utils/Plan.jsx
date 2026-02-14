@@ -87,10 +87,12 @@ export async function getProjectWeight(list_task_UUIDs) {
 
 export async function list_plans(email) {
   if (!email) throw new Error("email is required");
-  const base = import.meta.env.VITE_HOST_URL_TPLANET;
-  if (!base) throw new Error("VITE_HOST_URL_TPLANET is not set");
+  const base = (
+    import.meta.env.VITE_HOST_URL_TPLANET ||
+    (typeof window !== "undefined" ? window.location.origin : "")
+  ).replace(/\/+$/, "");
 
-  const url = `${base.replace(/\/+$/, "")}/api/projects/projects`;
+  const url = `${base}/api/projects/projects`;
   const body = new URLSearchParams({ email });
 
   const res = await fetch(url, {

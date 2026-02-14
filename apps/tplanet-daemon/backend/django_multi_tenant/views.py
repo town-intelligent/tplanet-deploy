@@ -400,10 +400,20 @@ def tenant_create(request: HttpRequest) -> JsonResponse:
         )
         logger.info(f"Created new tenant: {tenant_id}")
 
+    # Bind tenant -> current env (dev/stable) for deterministic `*.sechome.cc` routing.
+    binding = None
+    try:
+        from django_multi_tenant.tenant_env_router import bind_tenant_to_current_env
+        binding = bind_tenant_to_current_env(tenant_id)
+    except Exception as e:
+        logger.exception("Failed to bind tenant to env router")
+        binding = {"ok": False, "error": str(e)}
+
     return JsonResponse({
         "success": True,
         "message": f"Tenant '{tenant_id}' created",
         "data": tenant.to_dict(),
+        "binding": binding,
     }, status=201)
 
 
@@ -524,6 +534,15 @@ def tenant_detail(request: HttpRequest, tenant_id: str) -> JsonResponse:
         tenant.save()
         deleted_resources.append("db(deactivated)")
         logger.info(f"Deleted tenant: {tenant_id} — cleaned: {', '.join(deleted_resources)}")
+
+        # Best-effort: remove binding from env router (if configured).
+        try:
+            from django_multi_tenant.tenant_env_router import unbind_tenant
+            unbind_result = unbind_tenant(tenant_id)
+            if unbind_result.get("ok"):
+                deleted_resources.append("env_router(unbound)")
+        except Exception:
+            logger.exception("Failed to unbind tenant from env router")
 
         return JsonResponse({
             "success": True,

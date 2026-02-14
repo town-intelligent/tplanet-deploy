@@ -23,6 +23,9 @@ services:
     command: sh -c "pip install gunicorn && cd /server/backend && python manage.py migrate --noinput && gunicorn backend.wsgi:application --bind 0.0.0.0:5567"
     ports: !override
       - "5580:5567"
+    environment:
+      - TPLANET_ENV=dev
+      - TPLANET_BACKEND_NAME=mt-dev-backend
 
   db:
     container_name: mt-dev-db
