@@ -12,8 +12,9 @@ tenant is created (and remove it when deleted).
 
 - Requests to `https://{tenantId}.sechome.cc/*`:
   - look up `{tenantId}` in KV
-  - route to the configured origin for that env, while keeping the original host
-    (so the backend still sees `{tenantId}.sechome.cc`).
+  - route to the configured origin hostname for that env (`dev.4impact.cc` / `stable.4impact.cc`)
+  - include `X-TPlanet-Original-Host: {tenantId}.sechome.cc` so the backend can resolve the tenant
+    deterministically even though the origin hostname is now `*.4impact.cc`.
 - If the KV mapping is missing, the Worker can optionally auto-detect by checking
   which origin has `/api/tenant/{tenantId}`, then cache the result in KV.
 
@@ -77,4 +78,3 @@ In both dev and stable backends, tenant create/delete calls the binding API if t
 - `TENANT_ENV_ROUTER_BINDING_URL` = `https://<your-worker-domain>/__binding`
 - `TENANT_ENV_ROUTER_BINDING_TOKEN` = your bearer token
 - `TENANT_ENV_ROUTER_BINDING_REQUIRED` (optional) = `true` to fail hard on binding errors
-

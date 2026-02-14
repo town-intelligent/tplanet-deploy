@@ -104,7 +104,8 @@ export default {
     }
 
     const baseDomain = env.BASE_DOMAIN || "sechome.cc";
-    const tenantId = extractTenantId(url.hostname, baseDomain);
+    const originalHost = url.hostname;
+    const tenantId = extractTenantId(originalHost, baseDomain);
     if (!tenantId) {
       // Not our host; pass through.
       return fetch(request);
@@ -128,17 +129,23 @@ export default {
       targetEnv = defaultEnv;
     }
 
-    const resolveOverride = targetEnv === "dev" ? devHost : stableHost;
+    // Route to a deterministic origin hostname so the origin proxy (nginx) can choose the correct stack.
+    // Pass the original tenant hostname for backend tenant resolution.
+    const originHost = targetEnv === "dev" ? devHost : stableHost;
+    const originUrl = new URL(request.url);
+    originUrl.hostname = originHost;
 
-    // Keep the original URL host (tenantId.sechome.cc) but route to the chosen origin host.
-    const proxiedReq = new Request(request, {
-      cf: { resolveOverride } as any,
-    });
+    const upstreamReq = new Request(originUrl.toString(), request);
+    const upstreamHeaders = new Headers(upstreamReq.headers);
+    upstreamHeaders.set("X-TPlanet-Original-Host", originalHost);
+    upstreamHeaders.set("X-TPlanet-Env-Router", targetEnv);
+    upstreamHeaders.set("X-TPlanet-Env-Router-Origin", originHost);
+    const proxiedReq = new Request(upstreamReq, { headers: upstreamHeaders });
 
     const res = await fetch(proxiedReq);
     const out = new Response(res.body, res);
     out.headers.set("X-TPlanet-Env-Router", targetEnv);
-    out.headers.set("X-TPlanet-Env-Router-Resolve", resolveOverride);
+    out.headers.set("X-TPlanet-Env-Router-Origin", originHost);
     out.headers.set("X-TPlanet-Env-Router-Tenant", tenantId);
     return out;
   },
