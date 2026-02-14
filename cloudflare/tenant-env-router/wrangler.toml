@@ -1,0 +1,18 @@
+name = "tplanet-tenant-env-router"
+main = "src/index.ts"
+compatibility_date = "2026-02-14"
+
+# Fill these after creating KV namespaces:
+# - wrangler kv namespace create TENANT_ENV
+# - wrangler kv namespace create TENANT_ENV --preview
+kv_namespaces = [
+  { binding = "TENANT_ENV", id = "REPLACE_ME", preview_id = "REPLACE_ME" }
+]
+
+[vars]
+BASE_DOMAIN = "sechome.cc"
+DEFAULT_ENV = "stable"
+DEV_ORIGIN_HOST = "dev.4impact.cc"
+STABLE_ORIGIN_HOST = "stable.4impact.cc"
+AUTO_DETECT_MISSING_BINDING = "true"
+
