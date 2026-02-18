@@ -16,6 +16,16 @@ import { getSroiData, getSroiDataMeta } from "../../../utils/sroiUtils";
 import { useTranslation } from "react-i18next";
 import TrHtml from "../../../utils/TrHtml";
 
+const API_BASE = (import.meta.env.VITE_HOST_URL_TPLANET || "").replace(/\/+$/, "");
+const resolveAssetUrl = (path) => {
+  if (!path) return "";
+  if (/^https?:\/\//i.test(path)) return path;
+  if (path.startsWith("/static/")) {
+    return API_BASE ? `${API_BASE}${path}` : `/api${path}`;
+  }
+  return API_BASE ? `${API_BASE}${path}` : path;
+};
+
 export default function ProjectContent() {
   const [project, setProject] = useState({});
   const [tasks, setTasks] = useState([]);
@@ -278,7 +288,7 @@ export default function ProjectContent() {
             <img
               id="project_cover"
               className="max-w-full h-auto mx-auto"
-              src={import.meta.env.VITE_HOST_URL_TPLANET + project.img}
+              src={resolveAssetUrl(project.img)}
               alt=""
             />
             <div className="row mt-4 pb-4 border-b border-[#D9D9D9]">
@@ -467,7 +477,7 @@ export default function ProjectContent() {
                       <div key={index} className="row mt-4" id={`task_${index}`}>
                         <div className="col-md-6">
                           <img
-                            src={import.meta.env.VITE_HOST_URL_TPLANET + task.thumbnail}
+                            src={resolveAssetUrl(task.thumbnail)}
                             alt=""
                           />
                         </div>
