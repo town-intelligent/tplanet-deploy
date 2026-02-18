@@ -41,6 +41,14 @@ const useSdgImages = () => {
 };
 
 const API_BASE = (import.meta.env.VITE_HOST_URL_TPLANET || "").replace(/\/+$/, "");
+const resolveAssetUrl = (path) => {
+  if (!path) return "#";
+  if (/^https?:\/\//i.test(path)) return path;
+  if (path.startsWith("/static/")) {
+    return API_BASE ? `${API_BASE}${path}` : `/api${path}`;
+  }
+  return API_BASE ? `${API_BASE}${path}` : path;
+};
 
 // 期間字串美化：把 "YYYY/MM/DD - YYYY/MM/DD" 變成 "YYYY/MM/DD ~ YYYY/MM/DD"
 const displayPeriod = (period) =>
@@ -48,7 +56,7 @@ const displayPeriod = (period) =>
 
 // 單卡片
 const generateProjectBlock = (project) => {
-  const imgUrl = project?.img ? `${API_BASE}${project.img}` : "#";
+  const imgUrl = resolveAssetUrl(project?.img);
   return (
     <Col md={4} key={project.uuid} className="mb-4">
       <Card className="kpi-card" style={{ borderRadius: "20px" }}>

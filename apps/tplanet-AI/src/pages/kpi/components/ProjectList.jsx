@@ -6,6 +6,16 @@ import Pagination from "react-bootstrap/Pagination";
 import { useDepartments } from "../../../utils/multi-tenant";
 import { useTranslation } from "react-i18next";
 
+const API_BASE = (import.meta.env.VITE_HOST_URL_TPLANET || "").replace(/\/+$/, "");
+const resolveAssetUrl = (path) => {
+  if (!path) return "#";
+  if (/^https?:\/\//i.test(path)) return path;
+  if (path.startsWith("/static/")) {
+    return API_BASE ? `${API_BASE}${path}` : `/api${path}`;
+  }
+  return API_BASE ? `${API_BASE}${path}` : path;
+};
+
 const sdgs = [
   "SDG1",
   "SDG2",
@@ -109,11 +119,7 @@ const ProjectList = ({
             <div
               className="img-fluid bg-cover shadow"
               style={{
-                backgroundImage: `url(${
-                  project.img
-                    ? import.meta.env.VITE_HOST_URL_TPLANET + project.img
-                    : "#"
-                })`,
+                backgroundImage: `url(${resolveAssetUrl(project.img)})`,
                 height: "200px",
                 borderRadius: "18px",
                 backgroundSize: "cover",
